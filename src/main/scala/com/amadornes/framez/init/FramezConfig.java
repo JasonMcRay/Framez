@@ -24,6 +24,7 @@ public class FramezConfig {
     public static boolean craftable_metamorphic_stone = false;
     public static boolean enable_dc_motors = false;
     public static boolean craftable_dc_motors = false;
+    public static boolean enable_metamorphic_worldgen = true;
 
     // Issue Colors
     public static int color_issue_in_the_way = 0xFFFF00;
@@ -98,6 +99,8 @@ public class FramezConfig {
                 "DC Motors are meant for testing. They don't require power.");
         craftable_dc_motors = config.getBoolean("Craftable DC Motors", "Main", craftable_dc_motors,
                 "Makes DC Motors craftable. Useful if you don't have any power mods installed.");
+        enable_metamorphic_worldgen = config.getBoolean("Enable Metamorphic Stone Worldgen", "Main", enable_metamorphic_worldgen,
+                "Enables metamorphic stone worldgeneration");
 
         // Issue Colors
         color_issue_in_the_way = Integer.parseInt(
