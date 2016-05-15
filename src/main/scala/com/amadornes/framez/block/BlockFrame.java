@@ -63,7 +63,7 @@ public class BlockFrame extends Block implements IFrameBlock {
         this.material = material;
         this.id = id;
 
-        setHardness(1);
+        setHardness(1.5F);
         setResistance(20);
 
         setBlockName("frame_" + material.getType());

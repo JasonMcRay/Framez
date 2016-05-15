@@ -25,6 +25,7 @@ public class FramezConfig {
     public static boolean enable_dc_motors = false;
     public static boolean craftable_dc_motors = false;
     public static boolean enable_metamorphic_worldgen = true;
+    public static boolean silk_touch_metamorphic = true;
 
     // Issue Colors
     public static int color_issue_in_the_way = 0xFFFF00;
@@ -101,6 +102,7 @@ public class FramezConfig {
                 "Makes DC Motors craftable. Useful if you don't have any power mods installed.");
         enable_metamorphic_worldgen = config.getBoolean("Enable Metamorphic Stone Worldgen", "Main", enable_metamorphic_worldgen,
                 "Enables metamorphic stone worldgeneration");
+        silk_touch_metamorphic = config.getBoolean("Silktouch-able Metamorphic Stone", "Main", silk_touch_metamorphic, "Allows Metamorphic Stone to be silk touched");
 
         // Issue Colors
         color_issue_in_the_way = Integer.parseInt(

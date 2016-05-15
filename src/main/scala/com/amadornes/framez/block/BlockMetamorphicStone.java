@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import com.amadornes.framez.init.FramezConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -38,8 +39,8 @@ public class BlockMetamorphicStone extends Block {
     public BlockMetamorphicStone() {
 
         super(Material.iron);
-        setHardness(1.5F);
-        setResistance(30);
+        setHardness(3F);
+        setResistance(60);
         setBlockName(ModInfo.MODID + ":metamorphic_stone");
         setHarvestLevel("pickaxe", 3);
         setCreativeTab(FramezCreativeTab.tab);
@@ -59,8 +60,11 @@ public class BlockMetamorphicStone extends Block {
 
     @Override
     public boolean canSilkHarvest(World world, EntityPlayer player, int x, int y, int z, int metadata) {
-
-        return true;
+        if (FramezConfig.silk_touch_metamorphic) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
