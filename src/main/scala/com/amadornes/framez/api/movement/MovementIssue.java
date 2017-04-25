@@ -8,8 +8,12 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.AxisAlignedBB;
 
 import com.amadornes.trajectory.api.vec.BlockPos;
+import dan200.computercraft.api.lua.ILuaContext;
+import dan200.computercraft.api.lua.ILuaObject;
+import dan200.computercraft.api.lua.LuaException;
+import java.util.Set;
 
-public class MovementIssue {
+public class MovementIssue implements ILuaObject{
 
     public static final MovementIssue BLOCK = new MovementIssue("block", AxisAlignedBB.getBoundingBox(0, 0, 0, 1, 1, 1));
     public static final MovementIssue FACE = new MovementIssue("face", AxisAlignedBB.getBoundingBox(0, 0, 0, 1, 2 / 16D, 1));
@@ -132,5 +136,62 @@ public class MovementIssue {
         issue = issue.withInformation(information);
 
         return issue;
+    }
+    
+    @Override
+    public String[] getMethodNames() {
+        return new String[] {"getPositionX", "getPositionY", "getPositionZ", "getFace", "getColor", "getInformation", "getType"};
+    }
+
+    @Override
+    public Object[] callMethod(ILuaContext context, int method, Object[] arguments) throws LuaException, InterruptedException {
+        BlockPos pos = this.getPosition();
+        switch(method){
+            case 0: return new Object[] {pos.x};
+            case 1: return new Object[] {pos.y};
+            case 2: return new Object[] {pos.z};
+            case 3: return new Object[] {this.getFace()};
+            case 4: return new Object[] {this.getColor()};
+            case 5: return this.getInformation();
+            case 6: return new Object[] {this.type};
+        }
+        return null;
+    }
+    
+    public static class MovementIssuesLua implements ILuaObject{
+
+        private final MovementIssue[] issues;
+        
+        public MovementIssuesLua(Set<MovementIssue> issues){
+            this.issues = issues.toArray(new MovementIssue[issues.size()]);
+        }
+        
+        @Override
+        public String[] getMethodNames() {
+            return new String[] {"getIssue", "size"};
+        }
+
+        @Override
+        public Object[] callMethod(ILuaContext context, int method, Object[] arguments) throws LuaException, InterruptedException {
+            switch(method){
+                case 0:
+                    Object arg = arguments[0];
+                    if(arg == null) throw new LuaException("Not enough args. Expected number");
+                    System.out.println(arg);
+                    if(arg instanceof Double){
+                        int n = ((Double) arg).intValue();
+                        if(n > 0 && n < this.issues.length){
+                            return new Object[] {this.issues[n]};
+                        }else{
+                            throw new LuaException("Out of Bounds, " + n);
+                        }
+                    }else{
+                        throw new LuaException("Invalid arg. Expected number");
+                    }
+                case 1: return new Object[] {this.issues.length};
+            }
+            return null;
+        }
+        
     }
 }

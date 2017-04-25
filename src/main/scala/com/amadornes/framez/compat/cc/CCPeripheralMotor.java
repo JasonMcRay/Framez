@@ -1,5 +1,6 @@
 package com.amadornes.framez.compat.cc;
 
+import com.amadornes.framez.api.movement.MovementIssue;
 import com.amadornes.framez.tile.TileMotor;
 
 import dan200.computercraft.api.lua.ILuaContext;
@@ -24,8 +25,7 @@ public class CCPeripheralMotor implements IPeripheral {
 
     @Override
     public String[] getMethodNames() {
-
-        return new String[] { "move", "canMove" };
+        return new String[] { "move", "canMove" , "getMovementIssues"};
     }
 
     @Override
@@ -36,6 +36,8 @@ public class CCPeripheralMotor implements IPeripheral {
             return new Object[] { te.move(false) };
         } else if (method == 1) {
             return new Object[] { te.move(true) };
+        } else if (method == 2) {
+            return new Object[] { new MovementIssue.MovementIssuesLua(te.getMovementIssues()) };
         }
 
         return null;
