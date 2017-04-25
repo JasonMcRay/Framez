@@ -71,6 +71,23 @@ local.properties
 .idea/
 .idea_modules/
 
+### Forge Stuff ###
+
 /out/
 gradlew
 classes/
+/build/
+/.nb-gradle/
+/libs/
+/src/main/api/
+
+### Framez ###
+/src/main/scala/com/amadornes/framez/compat/ae2/
+/src/main/scala/com/amadornes/framez/compat/bc/
+/src/main/scala/com/amadornes/framez/compat/botania/
+/src/main/scala/com/amadornes/framez/compat/ee3/
+/src/main/scala/com/amadornes/framez/compat/floco/
+/src/main/scala/com/amadornes/framez/compat/ic2/
+/src/main/scala/com/amadornes/framez/compat/oc/
+/src/main/scala/com/amadornes/framez/compat/pc/
+/src/main/scala/com/amadornes/framez/compat/waila/

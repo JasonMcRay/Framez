@@ -39,7 +39,12 @@ dependencies {
     compile "codechicken:CodeChickenCore:1.7.10-1.0.7.47:dev"
     compile "codechicken:NotEnoughItems:1.7.10-1.0.5.120:dev"
     compile "codechicken:ForgeMultipart:1.7.10-1.2.0.345:dev"
-
+	// Below is me being lazy with maven
+    compile files("libs/Trajectory-1.7.10-0.1.2-universal.jar")
+    compile files("libs/CoFHCore-[1.7.10]3.1.4-329.jar")
+    compile files("libs/ComputerCraft1.75.jar")
+    compile files("libs/ThermalExpansion-[1.7.10]4.1.5-248.jar")
+    compile files("libs/ThermalFoundation-[1.7.10]1.2.6-118.jar")
 }
 
 processResources
