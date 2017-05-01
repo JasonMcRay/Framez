@@ -105,6 +105,36 @@ public class MovementIssue implements ILuaObject{
         return getPosition().hashCode() * 31 + face * 17 + color;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MovementIssue other = (MovementIssue) obj;
+        if (this.face != other.face) {
+            return false;
+        }
+        if (this.color != other.color) {
+            return false;
+        }
+        if ((this.type == null) ? (other.type != null) : !this.type.equals(other.type)) {
+            return false;
+        }
+        if (this.position != other.position && (this.position == null || !this.position.equals(other.position))) {
+            return false;
+        }
+        if (!Arrays.deepEquals(this.information, other.information)) {
+            return false;
+        }
+        return true;
+    }
+
     public void writeToNBT(NBTTagCompound tag) {
 
         tag.setString("type", type);
@@ -175,18 +205,21 @@ public class MovementIssue implements ILuaObject{
         public Object[] callMethod(ILuaContext context, int method, Object[] arguments) throws LuaException, InterruptedException {
             switch(method){
                 case 0:
-                    Object arg = arguments[0];
-                    if(arg == null) throw new LuaException("Not enough args. Expected number");
-                    System.out.println(arg);
-                    if(arg instanceof Double){
-                        int n = ((Double) arg).intValue();
-                        if(n > 0 && n < this.issues.length){
-                            return new Object[] {this.issues[n]};
+                    if(arguments != null && arguments.length > 0){
+                        if(arguments.length > 1) throw new LuaException("Too Many args, Expected number");
+                        Object arg = arguments[0];
+                        if(arg instanceof Double){
+                            int n = ((Double) arg).intValue() - 1;
+                            if(n > -1 && n < this.issues.length){
+                                return new Object[] {this.issues[n]};
+                            }else{
+                                throw new LuaException("Out of Bounds, " + n);
+                            }
                         }else{
-                            throw new LuaException("Out of Bounds, " + n);
+                            throw new LuaException("Invalid arg. Expected number");
                         }
                     }else{
-                        throw new LuaException("Invalid arg. Expected number");
+                        throw new LuaException("Not Enough args, Expected number");
                     }
                 case 1: return new Object[] {this.issues.length};
             }
