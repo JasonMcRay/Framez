@@ -8,8 +8,12 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.AxisAlignedBB;
 
 import com.amadornes.trajectory.api.vec.BlockPos;
+import dan200.computercraft.api.lua.ILuaContext;
+import dan200.computercraft.api.lua.ILuaObject;
+import dan200.computercraft.api.lua.LuaException;
+import java.util.Set;
 
-public class MovementIssue {
+public class MovementIssue implements ILuaObject{
 
     public static final MovementIssue BLOCK = new MovementIssue("block", AxisAlignedBB.getBoundingBox(0, 0, 0, 1, 1, 1));
     public static final MovementIssue FACE = new MovementIssue("face", AxisAlignedBB.getBoundingBox(0, 0, 0, 1, 2 / 16D, 1));
@@ -101,6 +105,36 @@ public class MovementIssue {
         return getPosition().hashCode() * 31 + face * 17 + color;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MovementIssue other = (MovementIssue) obj;
+        if (this.face != other.face) {
+            return false;
+        }
+        if (this.color != other.color) {
+            return false;
+        }
+        if ((this.type == null) ? (other.type != null) : !this.type.equals(other.type)) {
+            return false;
+        }
+        if (this.position != other.position && (this.position == null || !this.position.equals(other.position))) {
+            return false;
+        }
+        if (!Arrays.deepEquals(this.information, other.information)) {
+            return false;
+        }
+        return true;
+    }
+
     public void writeToNBT(NBTTagCompound tag) {
 
         tag.setString("type", type);
@@ -132,5 +166,65 @@ public class MovementIssue {
         issue = issue.withInformation(information);
 
         return issue;
+    }
+    
+    @Override
+    public String[] getMethodNames() {
+        return new String[] {"getPositionX", "getPositionY", "getPositionZ", "getFace", "getColor", "getInformation", "getType"};
+    }
+
+    @Override
+    public Object[] callMethod(ILuaContext context, int method, Object[] arguments) throws LuaException, InterruptedException {
+        BlockPos pos = this.getPosition();
+        switch(method){
+            case 0: return new Object[] {pos.x};
+            case 1: return new Object[] {pos.y};
+            case 2: return new Object[] {pos.z};
+            case 3: return new Object[] {this.getFace()};
+            case 4: return new Object[] {this.getColor()};
+            case 5: return this.getInformation();
+            case 6: return new Object[] {this.type};
+        }
+        return null;
+    }
+    
+    public static class MovementIssuesLua implements ILuaObject{
+
+        private final MovementIssue[] issues;
+        
+        public MovementIssuesLua(Set<MovementIssue> issues){
+            this.issues = issues.toArray(new MovementIssue[issues.size()]);
+        }
+        
+        @Override
+        public String[] getMethodNames() {
+            return new String[] {"getIssue", "size"};
+        }
+
+        @Override
+        public Object[] callMethod(ILuaContext context, int method, Object[] arguments) throws LuaException, InterruptedException {
+            switch(method){
+                case 0:
+                    if(arguments != null && arguments.length > 0){
+                        if(arguments.length > 1) throw new LuaException("Too Many args, Expected number");
+                        Object arg = arguments[0];
+                        if(arg instanceof Double){
+                            int n = ((Double) arg).intValue() - 1;
+                            if(n > -1 && n < this.issues.length){
+                                return new Object[] {this.issues[n]};
+                            }else{
+                                throw new LuaException("Out of Bounds, " + n);
+                            }
+                        }else{
+                            throw new LuaException("Invalid arg. Expected number");
+                        }
+                    }else{
+                        throw new LuaException("Not Enough args, Expected number");
+                    }
+                case 1: return new Object[] {this.issues.length};
+            }
+            return null;
+        }
+        
     }
 }
