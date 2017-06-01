@@ -21,6 +21,7 @@ import com.amadornes.framez.api.movement.IFrame;
 import com.amadornes.framez.api.movement.IMotor;
 import com.amadornes.framez.api.movement.IMovement;
 import com.amadornes.framez.api.movement.IMovement.IMovementBlink;
+import com.amadornes.framez.api.movement.IMovementLisener;
 import com.amadornes.framez.api.movement.IMovementRegistry.IgnoreMode;
 import com.amadornes.framez.api.movement.ISticky;
 import com.amadornes.framez.api.movement.ISticky.IAdvancedSticky;
@@ -44,6 +45,7 @@ import com.amadornes.trajectory.api.TrajectoryAPI;
 import com.amadornes.trajectory.api.TrajectoryFeature;
 import com.amadornes.trajectory.api.vec.BlockPos;
 import com.amadornes.trajectory.api.vec.Vector3;
+import net.minecraft.tileentity.TileEntity;
 
 public abstract class TileMotor extends TileFramez implements IMotor, IMovementCallback, ISticky, IAdvancedSticky {
 
@@ -250,8 +252,14 @@ public abstract class TileMotor extends TileFramez implements IMotor, IMovementC
                 minMovementTime = Math.max(minMovementTime, frame.getMaterial().getMinMovementTime());
 
             totalConsumed += 100;
-            if (b.getTileEntity() != null)
+            TileEntity tile = b.getTileEntity();
+            if (tile != null)
                 totalConsumed += 200;
+            
+            if(tile instanceof IMovementLisener){
+                IMovementLisener lisener = (IMovementLisener) tile;
+                lisener.onStartMoving();
+            }
         }
 
         if (minMovementTime == -1)
@@ -293,13 +301,21 @@ public abstract class TileMotor extends TileFramez implements IMotor, IMovementC
 
     @Override
     public void onStartMoving(IMovingStructure structure) {
-
+        
         this.structure = structure;
     }
 
     @Override
     public void onFinishMoving(IMovingStructure structure) {
 
+        for(IMovingBlock b : structure.getBlocks()){
+            TileEntity ti = b.getTileEntity();
+            if(ti instanceof IMovementLisener){
+                IMovementLisener tile = (IMovementLisener) ti;
+                tile.onFinishMoving(structure);
+            }
+        }
+        
         if (this.structure == structure)
             this.structure = null;
     }
